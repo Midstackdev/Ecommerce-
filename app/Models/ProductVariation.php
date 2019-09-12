@@ -62,36 +62,4 @@ class ProductVariation extends Model
 			]);
 	}
 
-	// Stock view pivot table issue
-	public function test_it_can_check_if_its_in_stock()
-	{
-		$product = factory(Product::class)->create();
-
-		$product->variations()->save(
-			$variation = factory(ProductVarition::class)->create()
-		);
-
-		$variation->stocks->save(
-			factory(Stock::class)->make()
-		);
-
-		$this->assertTrue($product->inStock());
-	}
-
-	public function test_it_can_get_the_stock_count()
-	{
-		$product = factory(Product::class)->create();
-
-		$product->variations()->save(
-			$variation = factory(ProductVarition::class)->create()
-		);
-
-		$variation->stocks->save(
-			factory(Stock::class)->make([
-				'quantity' => $quantity = 5
-			])
-		);
-
-		$this->assertEuals($product->stockCount(), $quantity);
-	}
 }
