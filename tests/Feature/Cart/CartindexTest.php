@@ -63,5 +63,21 @@ class CartindexTest extends TestCase
             ->assertJsonFragment([
                 'total' => '$0.00'
             ]);
+    } 
+
+    public function test_if_syncs_the_cart() //Stock_view table issue
+    {
+        $user = factory(User::class)->create();
+
+        $user->cart()->attach(
+            $product = factory(ProductVariation::class)->create(), [
+                'quantity' => 2
+            ]
+        );
+
+        $response = $this->jsonAs($user, 'GET', 'api/cart')
+            ->assertJsonFragment([
+                'changed' => 'true'
+            ]);
     }
 }
