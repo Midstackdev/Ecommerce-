@@ -2,11 +2,12 @@
 
 namespace Tests\Unit\Models\User;
 
-use App\Models\User;
+use App\Models\Address;
 use App\Models\ProductVariation;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class UserTest extends TestCase
 {
@@ -46,5 +47,16 @@ class UserTest extends TestCase
         );
 
         $this->assertEquals($user->cart->first()->pivot->quantity, $quantity);
+    }
+
+    public function test_it_has_many_addresses()
+    {
+        $user = factory(User::class)->create();
+
+        $user->addresses()->save(
+            factory(Address::class)->make()
+        );
+
+        $this->assertInstanceOf(Address::class, $user->addresses->first());
     }
 }
