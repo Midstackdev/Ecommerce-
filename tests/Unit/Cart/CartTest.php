@@ -5,6 +5,7 @@ namespace Tests\Unit\Cart;
 use App\Cart\Cart;
 use App\Cart\Money;
 use App\Models\ProductVariation;
+use App\Models\ShippingMethod;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -189,6 +190,7 @@ class CartTest extends TestCase
         $this->assertTrue($cart->hasChanged());
     }
 
+
     public function test_it_doesnt_change_the_cart() //Stock view table 
     {
         $cart = new Cart(
@@ -200,4 +202,43 @@ class CartTest extends TestCase
         $this->assertFalse($cart->hasChanged());
     }
 
+    public function test_it_can_return_correct_total_without_shipping()
+    {
+        $cart = new Cart(
+            $user = factory(User::class)->create()
+        );
+
+        $user->cart()->attach(
+            $product = factory(ProductVariation::class)->create([
+                'price' => 1000
+            ]), [
+                'quantity' => 2
+            ]
+        );
+
+        $this->assertEquals($cart->total()->amount(), 2000);
+    }
+
+    public function test_it_can_return_correct_total_with_shipping() //Stock view table 
+    {
+        $cart = new Cart(
+            $user = factory(User::class)->create()
+        );
+
+        $shipping = factory(ShippingMethod::class)->create([
+            'price' => 1000
+        ]);
+
+        $user->cart()->attach(
+            $product = factory(ProductVariation::class)->create([
+                'price' => 1000
+            ]), [
+                'quantity' => 2
+            ]
+        );
+
+        $cart = $cart->withShipping($shipping->id);
+
+        $this->assertEquals($cart->total()->amount(), 3000);
+    }
 }
