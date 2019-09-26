@@ -219,7 +219,7 @@ class CartTest extends TestCase
         $this->assertEquals($cart->total()->amount(), 2000);
     }
 
-    public function test_it_can_return_correct_total_with_shipping() //Stock view table 
+    public function test_it_can_return_correct_total_with_shipping()
     {
         $cart = new Cart(
             $user = factory(User::class)->create()
@@ -240,5 +240,23 @@ class CartTest extends TestCase
         $cart = $cart->withShipping($shipping->id);
 
         $this->assertEquals($cart->total()->amount(), 3000);
+    }
+
+    public function test_it_can_returns_products_in_cart() //Stock view table 
+    {
+        $cart = new Cart(
+            $user = factory(User::class)->create()
+        );
+
+        $user->cart()->attach(
+            $product = factory(ProductVariation::class)->create([
+                'price' => 1000
+            ]), [
+                'quantity' => 2
+            ]
+        );
+
+
+        $this->assertInstanceOf(ProductVariation::class, $cart->products()->first());
     }
 }

@@ -4,6 +4,7 @@ namespace Tests\Unit\Models\Orders;
 
 use App\Models\Address;
 use App\Models\Order;
+use App\Models\ProductVariation;
 use App\Models\ShippingMethod;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,5 +76,35 @@ class OrderTest extends TestCase
         ]);
 
         $this->assertInstanceOf(ShippingMethod::class, $order->shippingMethod); //returned mull
+    }
+
+    public function test_it_has_many_products()
+    {
+        $order = factory(Order::class)->create([
+            'user_id' => factory(User::class)->create()->id
+        ]);
+
+        $order->products()->attach(
+            factory(ProductVariation::class)->create(), [
+                'quantity' => 1
+            ]
+        );
+
+        $this->assertInstanceOf(ProductVariation::class, $order->products->first());
+    }
+
+    public function test_it_has_a_quantity_attached_to_the_products()
+    {
+        $order = factory(Order::class)->create([
+            'user_id' => factory(User::class)->create()->id
+        ]);
+
+        $order->products()->attach(
+            factory(ProductVariation::class)->create(), [
+                'quantity' => $quantity = 2
+            ]
+        );
+
+        $this->assertEquals($order->products->first()->pivot->quantity, $quantity);
     }
 }

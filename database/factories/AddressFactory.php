@@ -15,6 +15,6 @@ $factory->define(Address::class, function (Faker $faker) {
         'city' => $faker->city,
         'postal_code' => $faker->postcode,
         'country_id' => factory(Country::class)->create()->id,
-        // 'user_id' => factory(User::class)->create()->id,
+        'user_id' => factory(User::class)->create()->id,
     ];
 });
