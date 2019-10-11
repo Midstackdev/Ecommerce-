@@ -28,9 +28,12 @@ class AppServiceProvider extends ServiceProvider
          Schema::defaultStringLength(191);
 
          $this->app->singleton(Cart::class, function ($app) {
-            $app->auth->user()->load([
-                'cart.stock'
-            ]);
+            if($app->auth->user()) {
+                 $app->auth->user()->load([
+                    'cart.stock'
+                ]);
+            }
+            
             return new Cart($app->auth->user());
          });
     }
