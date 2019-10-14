@@ -55,7 +55,7 @@ class OrderController extends Controller
     protected function createOrder(Request $request, Cart $cart)
     {
     	return $request->user()->orders()->create(
-    		array_merge($request->only(['address_id', 'shipping_method__id']), [
+    		array_merge($request->only(['address_id', 'shipping_method__id', 'payment_method_id']), [
     			'subtotal' => $cart->subtotal()->amount()
     		])
     	);

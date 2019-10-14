@@ -76,7 +76,6 @@ class ProductVariationTest extends TestCase
         $this->assertTrue($variation->priceVaries());
     }
 
-    // Stock pivot table migration issue
     public function test_it_has_many_stocks()
     {
         $variation = factory(ProductVariation::class)->create();
