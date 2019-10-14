@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\PaymentMethods;
 
+use App\Cart\Payments\Gateway;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentMethodResource;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class PaymentMethodController extends Controller
 {
-	public function __construct()
+	public function __construct(Gateway $gateway)
 	{
 		$this->middleware(['auth:api']);
+		$this->gateway = $gateway;
 	}
 
     public function index(Request $request)
@@ -18,5 +20,14 @@ class PaymentMethodController extends Controller
     	return PaymentMethodResource::collection(
     		$request->user()->paymentMethods
     	);
+    }
+
+    public function store(Request $request)
+    {
+    	$card = $this->gateway->withUser($request->user())
+    			->createCustomer()
+    			->addCard($request->token);
+
+    	return new PaymentMethodResource($card);		
     }
 }
